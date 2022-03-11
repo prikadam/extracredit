@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slideshow</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+
+    <style>
+      #slideshow {
+        margin: 50px auto;
+        position: relative;
+        width: 240px;
+        height: 240px;
+        padding: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+        border-radius: 10px;
+      }
+      #slideshow > div {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+      }
+
+      #slideshow img {
+        max-width: 240px;
+        max-height: 240px;
+        border-radius: 10px;
+      }
+
+      .btn-wrapper {
+        display: flex;
+        justify-content: center;
+      }
+      .btn-wrapper > button {
+        margin: 0 1rem;
+        padding: 1rem 2rem;
+        font-size: large;
+      }
+      #start {
+        background-color: green;
+        border: none;
+        border-radius: 10px;
+        color: white;
+      }
+      #stop {
+        background-color: red;
+        color: white;
+        border: none;
+        border-radius: 10px;
+      }
+      button:disabled {
+        background-color: #cccccc !important;
+        color: #666666 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- container to show images -->
+    <div id="slideshow">
+      <div>
+        <img id="img" src="" />
+      </div>
+    </div>
+    <!-- button container for start and stop -->
+    <div class="btn-wrapper">
+      <button type="button" id="start">Start</button>
+      <button type="button" id="stop">Stop</button>
+    </div>
+  </body>
+
+  <script>
+    // var to track the stop and start
+    var stop = false;
+    // array of images to be displayed
+    var images = [
+      "./images/image1.jpeg",
+      "./images/image2.jpeg",
+      "./images/image3.jpeg",
+      "./images/image4.jpeg",
+      "./images/image5.jpeg",
+    ];
+
+    // initializing the container with first img from array
+    $("#img").attr("src", images[0]).show();
+
+    // to start the slideshow
+    $("#start").click(function () {
+      stop = false;
+      runSlideShow();
+      showPause();
+    });
+    // to stop the slideshow
+    $("#stop").click(function () {
+      stop = true;
+      showPlay();
+    });
+
+    // run the slideshow with some delay
+    // it also dictates the time for which images are displayed
+    function runSlideShow() {
+      setInterval(forwardImage, 2000);
+    }
+
+    // get the index of current image
+    function currentImageKey() {
+      i = jQuery.inArray($("#img").attr("src"), images);
+      return i;
+    }
+
+    // to move the images based on current index
+    function forwardImage() {
+      currentImageKey();
+      if (i < images.length - 1) {
+        changeImage(i + 1);
+      } else {
+        changeImage(0);
+      }
+    }
+
+    // to fade out the current image and fade in the next image
+    function changeImage(i) {
+      if (!stop) {
+        $("#img")
+          .stop()
+          .animate(
+            {
+              opacity: 0,
+            },
+            200,
+            function () {
+              $("#img").attr("src", images[i]);
+              $("#slideshow img").load(function () {
+                $("#img").stop().animate(
+                  {
+                    opacity: 1,
+                  },
+                  200,
+                  "linear"
+                );
+              });
+            }
+          );
+      }
+    }
+
+    // to disable the start button and enable the stop button
+    function showPause() {
+      $("#start").prop("disabled", true);
+      $("#stop").prop("disabled", false);
+    }
+    // to disable the stop button and enable the start button
+    function showPlay() {
+      $("#stop").prop("disabled", true);
+      $("#start").prop("disabled", false);
+    }
+  </script>
+</html>
